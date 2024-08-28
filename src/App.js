@@ -8,16 +8,20 @@ const App = () => {
   const [tableData, setTableData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchData = async () => {
+    setLoading(true);
+    setError("");
     try {
       const response = await axios.get("http://localhost:8080/user");
       setTableData(response.data);
     } catch (error) {
-      console.error(
-        "Error fetching data:",
-        error.response || error.message || error
-      );
+      setError("Error fetching data");
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,13 +36,10 @@ const App = () => {
           "Content-Type": "application/json",
         },
       });
-
-      await fetchData();
+      setTableData([...tableData, data]);
     } catch (error) {
-      console.error(
-        "Error adding data:",
-        error.response || error.message || error
-      );
+      setError("Error adding data");
+      console.error("Error adding data:", error);
     }
     setIsFormVisible(false);
   };
@@ -50,13 +51,12 @@ const App = () => {
           "Content-Type": "application/json",
         },
       });
-
-      await fetchData();
-    } catch (error) {
-      console.error(
-        "Error updating data:",
-        error.response || error.message || error
+      setTableData((prevData) =>
+        prevData.map((item) => (item.id === data.id ? data : item))
       );
+    } catch (error) {
+      setError("Error updating data");
+      console.error("Error updating data:", error);
     }
     setCurrentIndex(null);
     setIsFormVisible(false);
@@ -71,13 +71,10 @@ const App = () => {
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:8080/user/${id}`);
-
-      await fetchData();
+      setTableData(tableData.filter((item) => item.id !== id));
     } catch (error) {
-      console.error(
-        "Error deleting data:",
-        error.response || error.message || error
-      );
+      setError("Error deleting data");
+      console.error("Error deleting data:", error);
     }
   };
 
@@ -102,14 +99,19 @@ const App = () => {
       </div>
       <div className="main-content">
         <h1>Data Table</h1>
+        {error && <div className="error-message">{error}</div>}
         <button className="create" onClick={showCreateForm}>
           Create New Entry
         </button>
-        <TableComponent
-          data={tableData}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        {loading ? (
+          <p>Loading data...</p>
+        ) : (
+          <TableComponent
+            data={tableData}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
       </div>
     </div>
   );

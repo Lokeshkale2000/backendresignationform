@@ -14,6 +14,7 @@ const TableComponent = ({ data, onEdit, onDelete }) => {
               <th>Number</th>
               <th>Email</th>
               <th>Address</th>
+              <th>Password</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -25,6 +26,7 @@ const TableComponent = ({ data, onEdit, onDelete }) => {
                 <td>{item.number}</td>
                 <td>{item.email}</td>
                 <td>{item.address}</td>
+                <td>{item.password}</td>
                 <td>
                   <button className="edit" onClick={() => onEdit(item.id)}>
                     Edit

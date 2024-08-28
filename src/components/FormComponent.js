@@ -58,6 +58,7 @@ const FormComponent = ({ addData, updateData, currentData, onClose }) => {
         number: "",
         email: "",
         address: "",
+        password: ''
       });
       setApiError("");
       onClose(); 
@@ -114,6 +115,15 @@ const FormComponent = ({ addData, updateData, currentData, onClose }) => {
             type="text"
             name="address"
             value={formData.address}
+            onChange={handleInputChange}
+          />
+        </div>
+        <div>
+          <label>Password</label>
+          <input
+            type="text"
+            name="password"
+            value={formData.password}
             onChange={handleInputChange}
           />
         </div>
